@@ -33,3 +33,16 @@ def create_teren(teren_data: TerenCreate,
     session.commit()
     session.refresh(novi_teren)
     return novi_teren
+
+
+@router.put("/tereni/{id}")
+def update_teren(id: int, teren_data: TerenCreate,
+                 session: Session = Depends(get_session)):
+    teren = session.get(Teren, id)
+    if not teren:
+        raise HTTPException(status_code=404, detail="Teren nije pronađen")
+    for key, value in teren_data.dict().items():
+        setattr(teren, key, value)
+    session.commit()
+    session.refresh(teren)
+    return teren
