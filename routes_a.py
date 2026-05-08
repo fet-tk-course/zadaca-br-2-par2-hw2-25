@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 from typing import Optional
 from database import get_session
-from models_a import Teren, TerenCreate
+from models_a import Teren, TerenCreate, TerenUpdate
 
 
 router = APIRouter()
@@ -42,6 +42,19 @@ def update_teren(id: int, teren_data: TerenCreate,
     if not teren:
         raise HTTPException(status_code=404, detail="Teren nije pronađen")
     for key, value in teren_data.dict().items():
+        setattr(teren, key, value)
+    session.commit()
+    session.refresh(teren)
+    return teren
+
+
+@router.patch("/tereni/{id}")
+def partial_update_teren(id: int, teren_data: TerenUpdate,
+                         session: Session = Depends(get_session)):
+    teren = session.get(Teren, id)
+    if not teren:
+        raise HTTPException(status_code=404, detail="Teren nije pronađen")
+    for key, value in teren_data.dict(exclude_unset=True).items():
         setattr(teren, key, value)
     session.commit()
     session.refresh(teren)
