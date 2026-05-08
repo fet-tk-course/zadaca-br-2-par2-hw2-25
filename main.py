@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
 from database import create_db_and_tables
+from routes_a import router as teren_router
 
 
 @asynccontextmanager
@@ -15,6 +16,8 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan
 )
+
+app.include_router(teren_router)
 
 
 @app.get("/")

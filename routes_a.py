@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 from typing import Optional
 from database import get_session
-from models_a import Teren
+from models_a import Teren, TerenCreate
 
 
 router = APIRouter()
@@ -23,3 +23,13 @@ def get_teren(id: int, session: Session = Depends(get_session)):
     if not teren:
         raise HTTPException(status_code=404, detail="Teren nije pronađen")
     return teren
+
+
+@router.post("/tereni", status_code=201)
+def create_teren(teren_data: TerenCreate,
+                 session: Session = Depends(get_session)):
+    novi_teren = Teren.from_orm(teren_data)
+    session.add(novi_teren)
+    session.commit()
+    session.refresh(novi_teren)
+    return novi_teren
