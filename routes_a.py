@@ -59,3 +59,13 @@ def partial_update_teren(id: int, teren_data: TerenUpdate,
     session.commit()
     session.refresh(teren)
     return teren
+
+
+@router.delete("/tereni/{id}", status_code=204)
+def delete_teren(id: int, session: Session = Depends(get_session)):
+    teren = session.get(Teren, id)
+    if not teren:
+        raise HTTPException(status_code=404, detail="Teren nije pronađen")
+    session.delete(teren)
+    session.commit()
+    return
