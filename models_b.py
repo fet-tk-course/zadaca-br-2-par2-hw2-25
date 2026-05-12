@@ -18,7 +18,7 @@ class RezervacijaCreate(SQLModel):
     time_begin: datetime
     duration_h: int
     teren_id: int
-
+    status: Optional[str] = "pending"
 
 class RezervacijaUpdate(SQLModel):
     user:       Optional[str] = None
