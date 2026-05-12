@@ -5,7 +5,7 @@ from database import get_session
 from models_b import Rezervacija,RezervacijaCreate, RezervacijaUpdate
 
 
-router = APIRouter(prefix="/resursi_b", tags=["Resurs B"])
+router = APIRouter(prefix="/resursi_b", tags=["Rezervacije"])
 
 
 @router.post("/rezervacije", response_model=Rezervacija)
@@ -22,16 +22,41 @@ def create_rezervacija(
 
 
 @router.get("/rezervacije", response_model=list[Rezervacija])
-def get_rezervacije(session: Session = Depends(get_session)):
-    return session.exec(select(Rezervacija)).all()
+def get_rezervacije(
+    status: str | None = None,
+    teren_id: int | None = None,
+    session: Session = Depends(get_session)
+):
+    query = select(Rezervacija)
+
+    if status:
+        query = query.where(Rezervacija.status == status)
+
+    if teren_id:
+        query = query.where(Rezervacija.teren_id == teren_id)
+
+    return session.exec(query).all()
 
 
 @router.get("/rezervacije/{id}", response_model=Rezervacija)
 def get_rezervacija(id: int, session: Session = Depends(get_session)):
     rezervacija = session.get(Rezervacija, id)
+
     if not rezervacija:
-        raise HTTPException(status_code=404, detail="Rezervacija ne postoji")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Rezervacija nije pronađena"
+        )
+
     return rezervacija
+
+
+
+
+
+
+
+
 
 
 @router.put("/rezervacije/{id}", response_model=Rezervacija)
