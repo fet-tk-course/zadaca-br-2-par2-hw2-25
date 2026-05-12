@@ -70,8 +70,29 @@ curl -X POST "http://localhost:8000/tereni" \
 
 ### Resurs B: `/resursi_b`
 
-[Analogno kao za Resurs A]
+| Metoda | Ruta                | Opis                                       |
+| ------ | ------------------- | ------------------------------------------ |
+| GET    | `/rezervacije`      | Lista svih rezervacija (filter po statusu) |
+| GET    | `/rezervacije/{id}` | Dohvatanje rezervacije po ID-u             |
+| POST   | `/rezervacije`      | Kreiranje nove rezervacije                 |
+| PUT    | `/rezervacije/{id}` | Potpuna zamjena rezervacije                |
+| PATCH  | `/rezervacije/{id}` | Djelimično ažuriranje rezervacije          |
+| DELETE | `/rezervacije/{id}` | Brisanje rezervacije                       |
 
+**Primjer zahtjeva:**
+```bash
+# Kreiranje nove rezervacije
+curl -X POST "http://localhost:8000/rezervacije" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user": "mahir",
+    "date": "2026-05-12",
+    "time_begin": "14:00:00",
+    "duration_h": 2,
+    "teren_id": 1
+    "status": "pending"
+  }'
+```
 ## Korištenje AI alata
 
 ### Alat: [GitHub Copilot / ChatGPT / ...]
