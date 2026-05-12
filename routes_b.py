@@ -58,16 +58,20 @@ def get_rezervacija(id: int, session: Session = Depends(get_session)):
 
 
 @router.put("/rezervacije/{id}", response_model=Rezervacija)
-def update_rezervacija(
+def update_rezervacija_put(
     id: int,
-    data: RezervacijaUpdate,
+    data: RezervacijaCreate,
     session: Session = Depends(get_session)
 ):
     rezervacija = session.get(Rezervacija, id)
-    if not rezervacija:
-        raise HTTPException(status_code=404, detail="Ne postoji")
 
-    update_data = data.dict(exclude_unset=True)
+    if not rezervacija:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Rezervacija nije pronađena"
+        )
+
+    update_data = data.dict()
 
     for key, value in update_data.items():
         setattr(rezervacija, key, value)
