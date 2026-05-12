@@ -1,96 +1,90 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import Session, select
+from sqlmodel import SQLModel,Session, select
 from typing import Optional
 from database import get_session
-from models_b import Rezervacija,RezervacijaCreate, RezervacijaUpdate
+from models_b import Rezervacija, RezervacijaCreate, RezervacijaUpdate
 
+router = APIRouter()
 
-router = APIRouter(prefix="/resursi_b", tags=["Rezervacije"])
-
-
-@router.post(
-    "/rezervacije",
-    response_model=Rezervacija,
-    status_code=status.HTTP_201_CREATED
-)
-def create_rezervacija(
-    data: RezervacijaCreate,
-    session: Session = Depends(get_session)
-):
-    rezervacija = Rezervacija.from_orm(data)
-
-    session.add(rezervacija)
-    session.commit()
-    session.refresh(rezervacija)
-
-    return rezervacija
-
-
-
-@router.get("/rezervacije", response_model=list[Rezervacija])
-def get_rezervacije(
-    status: str | None = None,
-    teren_id: int | None = None,
+@router.get("/rezervacije")
+def get_all_rezervacije(
+    status: Optional[str] = None,
     session: Session = Depends(get_session)
 ):
     query = select(Rezervacija)
 
-    if status:
+    if status is not None:
         query = query.where(Rezervacija.status == status)
 
-    if teren_id:
-        query = query.where(Rezervacija.teren_id == teren_id)
-
     return session.exec(query).all()
-
-
-@router.get("/rezervacije/{id}", response_model=Rezervacija)
+@router.get("/rezervacije/{id}")
 def get_rezervacija(id: int, session: Session = Depends(get_session)):
     rezervacija = session.get(Rezervacija, id)
 
     if not rezervacija:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Rezervacija nije pronađena"
-        )
+        raise HTTPException(status_code=404, detail="Rezervacija nije pronađena")
 
     return rezervacija
 
+@router.post("/rezervacije", status_code=201)
+def create_rezervacija(
+    rezervacija_data: RezervacijaCreate,
+    session: Session = Depends(get_session)
+):
+    nova_rezervacija = Rezervacija.from_orm(rezervacija_data)
 
-@router.put("/rezervacije/{id}", response_model=Rezervacija)
-def update_rezervacija_put(
+    session.add(nova_rezervacija)
+    session.commit()
+    session.refresh(nova_rezervacija)
+
+    return nova_rezervacija
+
+@router.put("/rezervacije/{id}")
+def update_rezervacija(
     id: int,
-    data: RezervacijaCreate,
+    rezervacija_data: RezervacijaCreate,
     session: Session = Depends(get_session)
 ):
     rezervacija = session.get(Rezervacija, id)
 
     if not rezervacija:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Rezervacija nije pronađena"
-        )
+        raise HTTPException(status_code=404, detail="Rezervacija nije pronađena")
 
-    update_data = data.dict()
-
-    for key, value in update_data.items():
+    for key, value in rezervacija_data.dict().items():
         setattr(rezervacija, key, value)
 
-    session.add(rezervacija)
     session.commit()
     session.refresh(rezervacija)
 
     return rezervacija
 
+@router.patch("/rezervacije/{id}")
+def partial_update_rezervacija(
+    id: int,
+    rezervacija_data: RezervacijaUpdate,
+    session: Session = Depends(get_session)
+):
+    rezervacija = session.get(Rezervacija, id)
 
+    if not rezervacija:
+        raise HTTPException(status_code=404, detail="Rezervacija nije pronađena")
 
-@router.delete("/rezervacije/{id}")
+    for key, value in rezervacija_data.dict(exclude_unset=True).items():
+        setattr(rezervacija, key, value)
+
+    session.commit()
+    session.refresh(rezervacija)
+
+    return rezervacija
+
+@router.delete("/rezervacije/{id}", status_code=204)
 def delete_rezervacija(id: int, session: Session = Depends(get_session)):
     rezervacija = session.get(Rezervacija, id)
+
     if not rezervacija:
-        raise HTTPException(status_code=404, detail="Ne postoji")
+        raise HTTPException(status_code=404, detail="Rezervacija nije pronađena")
 
     session.delete(rezervacija)
     session.commit()
 
-    return {"message": "Obrisano"}
+    return
