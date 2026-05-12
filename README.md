@@ -3,12 +3,13 @@
 
 ## O projektu
 
-[Ovdje ukratko opišite domenu vaše aplikacije i njenu svrhu]
+Aplikacija za upravljanje teniskim terenima i rezervacijama. 
+Omogućava kreiranje, pregled, ažuriranje i brisanje teniskih terena i rezervacija.
 
 ## Tim
 
-- **Student A**: [Ime Prezime] - resurs: `/resursi_a`
-- **Student B**: [Ime Prezime] - resurs: `/resursi_b`
+- **Student A**: Dženan Čerkezović - resurs: `/tereni`
+- **Student B**: Mahir Duraković - resurs: `/rezervacije`
 
 ## Instalacija i pokretanje
 
@@ -48,23 +49,23 @@ uvicorn main:app --reload
 
 ## API Endpointi
 
-### Resurs A: `/resursi_a`
 
+### Resurs A: `/tereni`
 | Metoda | Ruta | Opis |
 |--------|------|------|
-| GET | `/resursi_a` | Lista svih resursa (sa query filterom) |
-| GET | `/resursi_a/{id}` | Dohvatanje resursa po ID-u |
-| POST | `/resursi_a` | Kreiranje novog resursa |
-| PUT | `/resursi_a/{id}` | Potpuna zamjena resursa |
-| PATCH | `/resursi_a/{id}` | Djelimično ažuriranje resursa |
-| DELETE | `/resursi_a/{id}` | Brisanje resursa |
+| GET | `/tereni` | Lista svih terena (filter po surface) |
+| GET | `/tereni/{id}` | Dohvatanje terena po ID-u |
+| POST | `/tereni` | Kreiranje novog terena |
+| PUT | `/tereni/{id}` | Potpuna zamjena terena |
+| PATCH | `/tereni/{id}` | Djelimično ažuriranje terena |
+| DELETE | `/tereni/{id}` | Brisanje terena |
 
 **Primjer zahtjeva:**
 ```bash
-# Kreiranje novog resursa
-curl -X POST "http://localhost:8000/resursi_a" \
+# Kreiranje novog terena
+curl -X POST "http://localhost:8000/tereni" \
   -H "Content-Type: application/json" \
-  -d '{"polje1": "vrijednost", "polje2": 123}'
+  -d '{"name": "Teren 1", "surface": "zemlja", "capacity": 2, "price_per_hour": 15.0, "is_covered": false, "available": true}'
 ```
 
 ### Resurs B: `/resursi_b`
