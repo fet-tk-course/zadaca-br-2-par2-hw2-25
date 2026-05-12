@@ -8,15 +8,21 @@ from models_b import Rezervacija,RezervacijaCreate, RezervacijaUpdate
 router = APIRouter(prefix="/resursi_b", tags=["Rezervacije"])
 
 
-@router.post("/rezervacije", response_model=Rezervacija)
+@router.post(
+    "/rezervacije",
+    response_model=Rezervacija,
+    status_code=status.HTTP_201_CREATED
+)
 def create_rezervacija(
     data: RezervacijaCreate,
     session: Session = Depends(get_session)
 ):
     rezervacija = Rezervacija.from_orm(data)
+
     session.add(rezervacija)
     session.commit()
     session.refresh(rezervacija)
+
     return rezervacija
 
 
@@ -49,14 +55,6 @@ def get_rezervacija(id: int, session: Session = Depends(get_session)):
         )
 
     return rezervacija
-
-
-
-
-
-
-
-
 
 
 @router.put("/rezervacije/{id}", response_model=Rezervacija)
