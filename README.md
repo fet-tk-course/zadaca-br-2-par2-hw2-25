@@ -96,18 +96,20 @@ curl -X POST "http://localhost:8000/rezervacije" \
 ## Korištenje AI alata
 
 ### Alat: [GitHub Copilot / ChatGPT / ...]
-**Model:** [GPT-4, Copilot model, ...]
+**Model:** [ChatGPT baziran na GPT-5.5 modelu]
 
 **Primjer 1:**
-- **Prompt:** [Npr. "Kreiraj SQLModel klasu za entitet Knjiga sa poljima naslov, autor, godina, isbn"]
-- **Kako je pomoglo:** [Opis]
-- **Prilagodbe:** [Da li ste morali prilagoditi generisani kod]
+- **Prompt:** Kreiraj SQLModel klasu za entitet Rezervacija sa poljima user, date, time_begin, duration_h, teren_id i status.
+- **Kako je pomoglo:** Pomoglo mi je da brzo definišem strukturu baze podataka
+- **Prilagodbe:** Morao sam prilagoditi tipove podataka i nazive polja kako bi odgovarali ostatku projekta
 
 **Primjer 2:**
-- **Prompt:** [Npr. "Implementiraj PATCH endpoint sa exclude_unset=True"]
-- **Kako je pomoglo:** [Opis]
-- **Prilagodbe:** [Opis]
+- **Prompt:** "Napravi FastAPI CRUD za entitet Rezervacija (GET, POST, PUT, PATCH, DELETE) koristeći SQLModel, uključujući filter po statusu i 404 error handling."
+- **Kako je pomoglo:** Pomoglo mi je da razumijem kako implementirati sve REST endpoint-e i kako koristiti Depends(get_session) za rad sa bazom. Također sam naučio kako pravilno implementirati PATCH sa exclude_unset=True.
+- **Prilagodbe:** Morao sam prilagoditi importove i organizaciju fajlova jer moj projekat nije imao poseban schemas_b.py, pa sam modele za Create i Update prebacio u models_b.py
 
 ## Napomene
 
-[Dodatne napomene specifične za vašu implementaciju]
+Endpointi su implementirani u skladu sa REST principima i zahtjevima zadatka, uključujući sve CRUD operacije.
+Posebna pažnja je posvećena obradi grešaka, svi endpointi koji koriste ID vraćaju 404 status ukoliko resurs nije pronađen.
+Implementiran je osnovni filter (status) u GET endpointu za dohvat liste resursa.
