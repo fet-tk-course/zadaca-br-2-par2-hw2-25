@@ -90,3 +90,25 @@ curl -X POST "http://localhost:8000/tereni" \
 ## Napomene
 
 [Dodatne napomene specifične za vašu implementaciju]
+
+
+
+
+
+Provjera2
+
+U Z1 a) je provjera da li je naziv terena u create shemi prazan string. Ukoliko jeste baci se iznimka
+uz odgovarajucu poruku.
+Z1 b) U zadatku dva dohvata se lista svih terena i vrsim provjeru da li u toj listi postoji teren
+sa istim nazivom kao teren koji se zeli dodati u listu preko POST metoda. Ukoliko postoji potrebno je baciti iznimku 
+u formatu statusni kod (409) plus odgovarajuca poruka.
+
+
+Z2)
+U endpointima se traze dostupni tereni (get_dostupni) i veliki tereni (get_veliki_tereni).
+Ukoliko isti postoje trebao bi se vratiti 200 ok statusni kod sa listom svih terena u odgovoru.
+U slucaju ako ne postoje mogao bi se dodati 404 status kod i bacanje iznimke.
+Naredni endpoint predstavlja (get_nedostupni) dohvat nedostupnih terena predstavlja listu svih onih koji nisu dostupni u datom trenutku i koji se mogu izbrisati iz liste. Ponovno u slucaju uspjesnog GET zahtjeva se vraca lista svih nedostupnih
+u bodyju plus 200 OK statusni kod.
+
+Promjene modela 1: Dodavanje validatora, polja nisu mijenjana.

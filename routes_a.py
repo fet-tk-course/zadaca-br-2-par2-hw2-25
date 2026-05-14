@@ -24,10 +24,21 @@ def get_teren(id: int, session: Session = Depends(get_session)):
         raise HTTPException(status_code=404, detail="Teren nije pronađen")
     return teren
 
+def svi_tereni(surface: Optional[str] = None,
+                   session: Session = Depends(get_session)):
+    query = select(Teren)
+    if surface is not None:
+        query = query.where(Teren.surface == surface)
+    return session.exec(query).all()
+
 
 @router.post("/tereni", status_code=201)
 def create_teren(teren_data: TerenCreate,
                  session: Session = Depends(get_session)):
+    tereni = svi_tereni()
+    for i in tereni 
+        if i.name == teren_data.id
+            raise HTTPException(status_code=409, detail="Ne smiju biti terena sa dva ista naziva")
     novi_teren = Teren.from_orm(teren_data)
     session.add(novi_teren)
     session.commit()
@@ -69,3 +80,28 @@ def delete_teren(id: int, session: Session = Depends(get_session)):
     session.delete(teren)
     session.commit()
     return
+
+
+@router.get("/tereni/dostupni")
+def get_dostupni(session: Session = Depends(get_session)):
+    query = select(Teren)
+    query = query.where(Teren.available==True)
+    return session.exec(query).all()
+
+
+@router.get("/tereni/veliki_tereni")
+def get_veliki_tereni(session: Session = Depends(get_session)):
+    query = select(Teren)
+    query = query.where(Teren.capacity>20)
+    return session.exec(query).all()
+
+
+@router.get("tereni/nedostupni")
+def get_veliki_tereni(session: Session = Depends(get_session)):
+    query = select(Teren)
+    query = query.where(Teren.available==False)
+    return session.exec(query).all()
+
+
+
+
