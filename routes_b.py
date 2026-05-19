@@ -28,7 +28,22 @@ def get_rezervacija(id: int, session: Session = Depends(get_session)):
 @router.post("/rezervacije", status_code=201)
 def create_rezervacija(
     rezervacija_data: RezervacijaCreate,
-    session: Session = Depends(get_session)):
+    session: Session = Depends(get_session)
+):
+    
+    postojeca = session.exec(
+        select(Rezervacija).where(
+            Rezervacija.teren_id == rezervacija_data.teren_id,
+            Rezervacija.date == rezervacija_data.date,
+            Rezervacija.time_begin == rezervacija_data.time_begin
+        )
+    ).first()
+
+    if postojeca:
+        raise HTTPException(
+            status_code=422,
+            detail="Rezervacija za ovaj teren u tom terminu već postoji"
+        )
 
     nova_rezervacija = Rezervacija.from_orm(rezervacija_data)
 
