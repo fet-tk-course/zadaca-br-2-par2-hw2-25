@@ -123,4 +123,20 @@ Za users tj korisnika provjeravali smo da li ime počinje velikim slovom.
 Za duration_h provjeravali smo koliko dugo će trajati njihov boravak gdje smo odlučili da trajanje mora biti između 1-4
 Za status radimo provjeru da li je status rezervacije pending , confirmed ili cancelled
 
-1b) u routes_b.py linija 28 -> @router.post("/rezervacije", status_code=201)  dodali smo provjeru koja vraća HTTP 422. Provjerili smo ako rezervacija postoji onda će se korisniku vratiti "Rezervacija za ovaj teren u tom terminu već postoji"
+1b) u routes_b.py linija 28 -> @router.post("/rezervacije", status_code=201)  dodali smo provjeru koja vraća HTTP 422. Provjerili smo ako rezervacija postoji onda će se korisniku vratiti "Rezervacija za ovaj teren u tom terminu već postoji". Polja za provjeru jedinstvenosti su: teren_id,date,time_begin.
+
+2)Dodan novi model ProvjeraTermina, ubacen custom endpoint @router.post("/rezervacije/provjeri-dostupnost")
+
+Novi endpoint će provjeravati dostupnost termina, ako termin postoji vratit će "Termin je zauzet" ako termin je postoji vratit će "Termin je slobodan"
+
+Primjer zahtjeva endpointa iz zadatka 2:
+{
+  "date": "2026-05-19",
+  "time_begin": "2026-05-25,16:00:00",
+  "teren_id": 123
+}
+odg:
+{
+  "dostupan": true,
+  "poruka": "Termin je slobodan"
+}
