@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
 from database import create_db_and_tables
+from routes_a import router as teren_router
+from routes_b import router as rezervacija_router
 
 
 @asynccontextmanager
@@ -16,6 +18,8 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+app.include_router(teren_router)
+app.include_router(rezervacija_router)  
 
 @app.get("/")
 def read_root():

@@ -1,13 +1,15 @@
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/wxDq4rbD)
 # Zadaća 2 - REST API aplikacija
 
 ## O projektu
 
-[Ovdje ukratko opišite domenu vaše aplikacije i njenu svrhu]
+Aplikacija za upravljanje teniskim terenima i rezervacijama. 
+Omogućava kreiranje, pregled, ažuriranje i brisanje teniskih terena i rezervacija.
 
 ## Tim
 
-- **Student A**: [Ime Prezime] - resurs: `/resursi_a`
-- **Student B**: [Ime Prezime] - resurs: `/resursi_b`
+- **Student A**: Dženan Čerkezović - resurs: `/tereni`
+- **Student B**: Mahir Duraković - resurs: `/rezervacije`
 
 ## Instalacija i pokretanje
 
@@ -47,44 +49,94 @@ uvicorn main:app --reload
 
 ## API Endpointi
 
-### Resurs A: `/resursi_a`
 
+### Resurs A: `/tereni`
 | Metoda | Ruta | Opis |
 |--------|------|------|
-| GET | `/resursi_a` | Lista svih resursa (sa query filterom) |
-| GET | `/resursi_a/{id}` | Dohvatanje resursa po ID-u |
-| POST | `/resursi_a` | Kreiranje novog resursa |
-| PUT | `/resursi_a/{id}` | Potpuna zamjena resursa |
-| PATCH | `/resursi_a/{id}` | Djelimično ažuriranje resursa |
-| DELETE | `/resursi_a/{id}` | Brisanje resursa |
+| GET | `/tereni` | Lista svih terena (filter po surface) |
+| GET | `/tereni/{id}` | Dohvatanje terena po ID-u |
+| POST | `/tereni` | Kreiranje novog terena |
+| PUT | `/tereni/{id}` | Potpuna zamjena terena |
+| PATCH | `/tereni/{id}` | Djelimično ažuriranje terena |
+| DELETE | `/tereni/{id}` | Brisanje terena |
 
 **Primjer zahtjeva:**
 ```bash
-# Kreiranje novog resursa
-curl -X POST "http://localhost:8000/resursi_a" \
+# Kreiranje novog terena
+curl -X POST "http://localhost:8000/tereni" \
   -H "Content-Type: application/json" \
-  -d '{"polje1": "vrijednost", "polje2": 123}'
+  -d '{"name": "Teren 1", "surface": "zemlja", "capacity": 2, "price_per_hour": 15.0, "is_covered": false, "available": true}'
 ```
 
 ### Resurs B: `/resursi_b`
 
-[Analogno kao za Resurs A]
+| Metoda | Ruta                | Opis                                       |
+| ------ | ------------------- | ------------------------------------------ |
+| GET    | `/rezervacije`      | Lista svih rezervacija (filter po statusu) |
+| GET    | `/rezervacije/{id}` | Dohvatanje rezervacije po ID-u             |
+| POST   | `/rezervacije`      | Kreiranje nove rezervacije                 |
+| PUT    | `/rezervacije/{id}` | Potpuna zamjena rezervacije                |
+| PATCH  | `/rezervacije/{id}` | Djelimično ažuriranje rezervacije          |
+| DELETE | `/rezervacije/{id}` | Brisanje rezervacije                       |
 
+**Primjer zahtjeva:**
+```bash
+# Kreiranje nove rezervacije
+curl -X POST "http://localhost:8000/rezervacije" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user": "mahir",
+    "date": "2026-05-12",
+    "time_begin": "14:00:00",
+    "duration_h": 2,
+    "teren_id": 1
+    "status": "pending"
+  }'
+```
 ## Korištenje AI alata
 
 ### Alat: [GitHub Copilot / ChatGPT / ...]
-**Model:** [GPT-4, Copilot model, ...]
+**Model:** [ChatGPT baziran na GPT-5.5 modelu]
 
 **Primjer 1:**
-- **Prompt:** [Npr. "Kreiraj SQLModel klasu za entitet Knjiga sa poljima naslov, autor, godina, isbn"]
-- **Kako je pomoglo:** [Opis]
-- **Prilagodbe:** [Da li ste morali prilagoditi generisani kod]
+- **Prompt:** Kreiraj SQLModel klasu za entitet Rezervacija sa poljima user, date, time_begin, duration_h, teren_id i status.
+- **Kako je pomoglo:** Pomoglo mi je da brzo definišem strukturu baze podataka
+- **Prilagodbe:** Morao sam prilagoditi tipove podataka i nazive polja kako bi odgovarali ostatku projekta
 
 **Primjer 2:**
-- **Prompt:** [Npr. "Implementiraj PATCH endpoint sa exclude_unset=True"]
-- **Kako je pomoglo:** [Opis]
-- **Prilagodbe:** [Opis]
+- **Prompt:** "Napravi FastAPI CRUD za entitet Rezervacija (GET, POST, PUT, PATCH, DELETE) koristeći SQLModel, uključujući filter po statusu i 404 error handling."
+- **Kako je pomoglo:** Pomoglo mi je da razumijem kako implementirati sve REST endpoint-e i kako koristiti Depends(get_session) za rad sa bazom. Također sam naučio kako pravilno implementirati PATCH sa exclude_unset=True.
+- **Prilagodbe:** Morao sam prilagoditi importove i organizaciju fajlova jer moj projekat nije imao poseban schemas_b.py, pa sam modele za Create i Update prebacio u models_b.py
 
 ## Napomene
 
-[Dodatne napomene specifične za vašu implementaciju]
+Endpointi su implementirani u skladu sa REST principima i zahtjevima zadatka, uključujući sve CRUD operacije.
+Posebna pažnja je posvećena obradi grešaka, svi endpointi koji koriste ID vraćaju 404 status ukoliko resurs nije pronađen.
+Implementiran je osnovni filter (status) u GET endpointu za dohvat liste resursa.
+
+
+## Provjera Mahir Durakovic
+
+Opis promjena dodanih u Z1 i Z2 :
+1a) u models_b.py linija 17 -> class RezervacijaCreate(SQLModel): smo dodali validaciju/provjeru za users,duration_h i status.
+Za users tj korisnika provjeravali smo da li ime počinje velikim slovom. 
+Za duration_h provjeravali smo koliko dugo će trajati njihov boravak gdje smo odlučili da trajanje mora biti između 1-4
+Za status radimo provjeru da li je status rezervacije pending , confirmed ili cancelled
+
+1b) u routes_b.py linija 28 -> @router.post("/rezervacije", status_code=201)  dodali smo provjeru koja vraća HTTP 422. Provjerili smo ako rezervacija postoji onda će se korisniku vratiti "Rezervacija za ovaj teren u tom terminu već postoji". Polja za provjeru jedinstvenosti su: teren_id,date,time_begin.
+
+2)Dodan novi model ProvjeraTermina, ubacen custom endpoint @router.post("/rezervacije/provjeri-dostupnost")
+
+Novi endpoint će provjeravati dostupnost termina, ako termin postoji vratit će "Termin je zauzet" ako termin je postoji vratit će "Termin je slobodan"
+
+Primjer zahtjeva endpointa iz zadatka 2:
+{
+  "date": "2026-05-19",
+  "time_begin": "2026-05-25,16:00:00",
+  "teren_id": 123
+}
+odg:
+{
+  "dostupan": true,
+  "poruka": "Termin je slobodan"
+}
