@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 from typing import Optional
 from database import get_session
-from models_b import Rezervacija, RezervacijaCreate, RezervacijaUpdate
+from models_b import Rezervacija, RezervacijaCreate, RezervacijaUpdate,ProvjeraTermina
 
 router = APIRouter()
 
@@ -102,3 +102,28 @@ def delete_rezervacija(id: int, session: Session = Depends(get_session)):
     session.commit()
 
     return
+
+
+@router.post("/rezervacije/provjeri-dostupnost")
+def provjeri_dostupnost(
+    podaci: ProvjeraTermina,
+    session: Session = Depends(get_session)
+):
+    rezervacija = session.exec(
+        select(Rezervacija).where(
+            Rezervacija.teren_id == podaci.teren_id,
+            Rezervacija.date == podaci.date,
+            Rezervacija.time_begin == podaci.time_begin
+        )
+    ).first()
+
+    if rezervacija:
+        return {
+            "dostupan": False,
+            "poruka": "Termin je zauzet"
+        }
+
+    return {
+        "dostupan": True,
+        "poruka": "Termin je slobodan"
+    }

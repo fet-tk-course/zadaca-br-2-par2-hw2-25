@@ -53,7 +53,10 @@ class RezervacijaUpdate(SQLModel):
     teren_id: Optional[int] = None
     status: Optional[str] = None
 
-
+class ProvjeraTermina(SQLModel):
+    date: datetime
+    time_begin: datetime
+    teren_id: int
 
 
 

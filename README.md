@@ -113,3 +113,14 @@ curl -X POST "http://localhost:8000/rezervacije" \
 Endpointi su implementirani u skladu sa REST principima i zahtjevima zadatka, uključujući sve CRUD operacije.
 Posebna pažnja je posvećena obradi grešaka, svi endpointi koji koriste ID vraćaju 404 status ukoliko resurs nije pronađen.
 Implementiran je osnovni filter (status) u GET endpointu za dohvat liste resursa.
+
+
+## Provjera Mahir Durakovic
+
+Opis promjena dodanih u Z1 i Z2 :
+1a) u models_b.py linija 17 -> class RezervacijaCreate(SQLModel): smo dodali validaciju/provjeru za users,duration_h i status.
+Za users tj korisnika provjeravali smo da li ime počinje velikim slovom. 
+Za duration_h provjeravali smo koliko dugo će trajati njihov boravak gdje smo odlučili da trajanje mora biti između 1-4
+Za status radimo provjeru da li je status rezervacije pending , confirmed ili cancelled
+
+1b) u routes_b.py linija 28 -> @router.post("/rezervacije", status_code=201)  dodali smo provjeru koja vraća HTTP 422. Provjerili smo ako rezervacija postoji onda će se korisniku vratiti "Rezervacija za ovaj teren u tom terminu već postoji"
